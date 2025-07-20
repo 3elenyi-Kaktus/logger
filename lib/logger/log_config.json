@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "disable_existing_loggers": false,
+  "formatters": {
+    "colored": {
+      "()": "lib.logger.formatters.LogFormatterFactory",
+      "fmt": "%(levelname)-5s %(filename)s->%(funcName)s(%(lineno)d):    %(message)s",
+      "formatter_names": ["colored"]
+    },
+    "detailed": {
+      "()": "lib.logger.formatters.LogFormatterFactory",
+      "fmt": "%(asctime)s %(levelname)-5s [%(process)d][%(code_location)-54s]:    %(message)s",
+      "formatter_names": ["code_location"],
+      "data": {
+        "code_location_format": "%(filename)s->%(funcName)s(%(lineno)d)"
+      }
+    }
+  },
+  "handlers": {
+    "stream": {
+      "level": "NOTSET",
+      "formatter": "colored",
+      "class": "logging.StreamHandler",
+      "stream": "ext://sys.stdout"
+    },
+    "file": {
+      "level": "NOTSET",
+      "formatter": "detailed",
+      "class": "lib.logger.logger.MultiprocessingHandler",
+      "filename": null
+    }
+  },
+  "root": {
+    "handlers": [
+      "stream",
+      "file"
+    ],
+    "level": "NOTSET"
+  }
+}
