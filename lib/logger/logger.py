@@ -1,24 +1,24 @@
 import os
 import logging
 import shutil
-from logging import handlers, Logger as BaseLogger
+from logging import handlers, Logger as BasicLogger
 from logging.config import dictConfig
 from pathlib import Path
 from uuid import uuid4
 
 from lib.json.manager import JSONManager, toReadableJSON
-from src.config.config import Config
 
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 
 TRACE: int = 5
 logging.addLevelName(TRACE, "TRACE")
 
 
 def listLoggers() -> None:
-    loggers: list[BaseLogger] = [logging.getLogger()]
-    loggers = loggers + [logging.getLogger(name) for name in logging.root.manager.loggerDict]
+    loggers: list[BasicLogger] = [logging.getLogger()]
+    for name in logging.root.manager.loggerDict:
+        loggers.append(logging.getLogger(name))
     logging.info(
         toReadableJSON(
             [
@@ -112,7 +112,7 @@ class Logger:
         config["handlers"]["file"]["filename"] = self.log_filepath
         config["handlers"]["file"]["level"] = logging.getLevelName(self.file_log_level)
 
-        self.optimize(config)
+        self.optimizeFieldEvaluation(config)
 
         dictConfig(config)
 
@@ -120,60 +120,53 @@ class Logger:
         logging.info("Screen logging initialized successfully")
 
     @staticmethod
-    def optimize(config: dict):
+    def optimizeFieldEvaluation(config: dict):
         # not all LogRecord fields are actually needed (and consequently computed)
         # if certain patterns are not found in format strings, corresponding parameter evaluations are disabled
 
-        # logging.logAsyncioTasks is not checked as current version seems to not have it
+        # logging.logAsyncioTasks is not checked as current logging version seems to not have it
 
         formats: list[str] = []
         for formatter in config["formatters"].values():
             formats.append(formatter["fmt"])
 
-        can_disable: bool = True
+        option_needed: bool = False
         for value in ["thread", "threadName"]:
             for fmt in formats:
                 if value in fmt:
-                    can_disable = False
+                    option_needed = True
                     break
-            if not can_disable:
+            if option_needed:
                 break
-        logging.debug(f"Setting logThreads to {not can_disable}")
-        logging.logThreads = not can_disable
+        logging.debug(f"Setting logThreads to {option_needed}")
+        logging.logThreads = option_needed
 
-        can_disable = True
+        option_needed = False
         for fmt in formats:
             if "processName" in fmt:
-                can_disable = False
+                option_needed = True
                 break
-        logging.debug(f"Setting logMultiprocessing to {not can_disable}")
-        logging.logMultiprocessing = not can_disable
+        logging.debug(f"Setting logMultiprocessing to {option_needed}")
+        logging.logMultiprocessing = option_needed
 
-        can_disable = True
+        option_needed = False
         for fmt in formats:
             if "process" in fmt:
-                can_disable = False
+                option_needed = True
                 break
-        logging.debug(f"Setting logProcesses to {not can_disable}")
-        logging.logProcesses = not can_disable
+        logging.debug(f"Setting logProcesses to {option_needed}")
+        logging.logProcesses = option_needed
 
-    def enableHotReloading(self, config: Config):
-        config.addReloadCallback(
-            self.onConfigReload,
-            [
-                config.log_config_filepath,
-                Config.log_filepath,
-                Config.console_log_level,
-                Config.file_log_level,
-                Config.tty_enabled,
-            ],
-        )
-
-    def onConfigReload(self, config: Config) -> None:
+    def onReload(
+        self,
+        console_log_level: int,
+        file_log_level: int,
+        tty_enabled: bool,
+    ) -> None:
         logging.info(f"Reloading logger")
-        self.console_log_level = config.console_log_level
-        self.file_log_level = config.file_log_level
-        self.tty_enabled = config.tty_enabled
+        self.console_log_level = console_log_level
+        self.file_log_level = file_log_level
+        self.tty_enabled = tty_enabled
         self.setup()
         logging.info("Logger reloaded")
 
