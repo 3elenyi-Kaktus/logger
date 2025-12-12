@@ -1,8 +1,8 @@
-import logging
 from abc import ABC, abstractmethod
-from logging import Formatter, LogRecord
 from enum import Enum
-from typing import Type, Any
+import logging
+from logging import Formatter, LogRecord
+from typing import Any, Type
 
 from lib.logger.logger import TRACE
 

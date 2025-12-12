@@ -1,15 +1,15 @@
-import os
 import logging
-import shutil
-from logging import handlers, Logger as BasicLogger
+from logging import Logger as BasicLogger, handlers
 from logging.config import dictConfig
+import os
 from pathlib import Path
+import shutil
 from uuid import uuid4
 
 from lib.json.manager import JSONManager, toReadableJSON
 
 
-__version__ = "0.2.2"
+__version__ = "0.2.3"
 
 TRACE: int = 5
 logging.addLevelName(TRACE, "TRACE")
@@ -41,12 +41,16 @@ class MultiprocessingHandler(logging.handlers.WatchedFileHandler):
     def emit(self, record):
         try:
             msg = record.msg
-            if not issubclass(type(msg), BaseException):
-                while len(msg) > 3900:
-                    record.msg = msg[:3900] + "..."
-                    msg = msg[3900:]
-                    super(MultiprocessingHandler, self).emit(record)
-                record.msg = msg
+            if issubclass(type(msg), BaseException):
+                super(MultiprocessingHandler, self).emit(record)
+                return
+            if not isinstance(msg, str):
+                msg = str(msg)
+            while len(msg) > 3900:
+                record.msg = msg[:3900] + "..."
+                msg = "..." + msg[3900:]
+                super(MultiprocessingHandler, self).emit(record)
+            record.msg = msg
             super(MultiprocessingHandler, self).emit(record)
         except (KeyboardInterrupt, SystemExit):
             raise

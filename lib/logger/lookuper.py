@@ -1,7 +1,8 @@
 import argparse
-import re
 from argparse import ArgumentParser
 from pathlib import Path
+import re
+
 
 if __name__ == "__main__":
     parser = ArgumentParser()
