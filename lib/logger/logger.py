@@ -6,10 +6,10 @@ from pathlib import Path
 import shutil
 from uuid import uuid4
 
-from lib.json.manager import JSONManager, toReadableJSON
+from lib.json.helpers import readJSON, toReadableJSON
 
 
-__version__ = "0.2.3"
+__version__ = "0.2.4"
 
 TRACE: int = 5
 logging.addLevelName(TRACE, "TRACE")
@@ -96,8 +96,7 @@ class Logger:
         self.setup()
 
     def setup(self):
-        manager: JSONManager = JSONManager()
-        config: dict = manager.readJSON(self.log_config_filepath)
+        config: dict = readJSON(self.log_config_filepath)
         if isinstance(config, list):
             raise RuntimeError(f"Expected a dict config in json file")
 
