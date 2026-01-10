@@ -6,10 +6,8 @@ from pathlib import Path
 import shutil
 from uuid import uuid4
 
-from lib.json.helpers import readJSON, toReadableJSON
+from json_helpers.helpers import readJSON, toReadableJSON
 
-
-__version__ = "0.2.4"
 
 TRACE: int = 5
 logging.addLevelName(TRACE, "TRACE")

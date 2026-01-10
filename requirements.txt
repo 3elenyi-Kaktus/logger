@@ -1,0 +1,1 @@
+json-helpers @ git+https://git.int.rnd-42.ru/ffatkullin/python-templates.git@json-helpers-v0.1.2#subdirectory=json-helpers

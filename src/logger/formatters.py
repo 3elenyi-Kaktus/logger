@@ -4,7 +4,7 @@ import logging
 from logging import Formatter, LogRecord
 from typing import Any, Type
 
-from lib.logger.logger import TRACE
+from logger.logger import TRACE
 
 
 class BaseFormatter(ABC):
