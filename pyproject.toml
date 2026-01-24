@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "logger"
 dependencies = [
-    "json-helpers @ git+https://git.int.rnd-42.ru/ffatkullin/python-templates.git@json-helpers-v0.1.2#subdirectory=json-helpers"
+    "json-helpers @ git+https://git.int.rnd-42.ru/ffatkullin/python-templates.git@json-helpers-v0.2.0#subdirectory=json-helpers"
 ]
 dynamic = ["version"]
 
