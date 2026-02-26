@@ -1,0 +1,11 @@
+# PyCharm
+.idea
+
+# Virtual environment
+.venv
+
+# Python bytecode
+**/__pycache__
+
+# Project metadata
+*.egg-info
