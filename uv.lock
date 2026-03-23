@@ -78,8 +78,8 @@ wheels = [
 
 [[package]]
 name = "json-helpers"
-version = "1.0.0"
-source = { git = "https://git.int.rnd-42.ru/ffatkullin/json-helpers.git?rev=v1.0.0#c234992c421387f76f5b187f02bbd7051fa88d5b" }
+version = "2.0.1"
+source = { git = "https://github.com/3elenyi-Kaktus/json-helpers.git?rev=v2.0.1#007cf1bdf86a7dcd2a844e2d0b0f033fe9c165fc" }
 
 [[package]]
 name = "logger"
@@ -95,7 +95,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "json-helpers", git = "https://git.int.rnd-42.ru/ffatkullin/json-helpers.git?rev=v1.0.0" }]
+requires-dist = [{ name = "json-helpers", git = "https://github.com/3elenyi-Kaktus/json-helpers.git?rev=v2.0.1" }]
 
 [package.metadata.requires-dev]
 dev = [

@@ -1,3 +1,3 @@
 [submodule ".code-fmt"]
 	path = .code-fmt
-	url = https://git.int.rnd-42.ru/ffatkullin/code-formatting.git
+	url = https://github.com/3elenyi-Kaktus/code-formatting

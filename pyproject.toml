@@ -39,7 +39,7 @@ extend-exclude = '''
 version = {attr = "logger.__version__"}
 
 [tool.uv.sources]
-json-helpers = { git = "https://git.int.rnd-42.ru/ffatkullin/json-helpers.git", rev = "v1.0.0" }
+json-helpers = { git = "https://github.com/3elenyi-Kaktus/json-helpers.git", rev = "v2.0.1"}
 
 [build-system]
 requires = ["setuptools>=61"]
