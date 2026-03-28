@@ -2,14 +2,14 @@ from abc import ABC, abstractmethod
 from enum import Enum
 import logging
 from logging import Formatter, LogRecord
-from typing import Any, Type
+from typing import Any, Optional, Type
 
 from logger.logger import TRACE
 
 
 class BaseFormatter(ABC):
     @abstractmethod
-    def __init__(self, *args, **kwargs) -> None: ...
+    def __init__(self, *args: Any, **kwargs: Any) -> None: ...
 
     @abstractmethod
     def prepareFormat(self, fmt: str) -> str: ...
@@ -19,7 +19,7 @@ class BaseFormatter(ABC):
 
 
 class CodeLocationLogFormatter(BaseFormatter):
-    def __init__(self, code_location_format: str, *args, **kwargs) -> None:
+    def __init__(self, code_location_format: str, *args: Any, **kwargs: Any) -> None:
         self.code_location_format: str = code_location_format
 
     def prepareFormat(self, fmt: str) -> str:
@@ -44,7 +44,7 @@ class ColoredLogFormatter(BaseFormatter):
     }
     NC = "\033[0m"  # no color
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         pass
 
     def prepareFormat(self, fmt: str) -> str:
@@ -67,7 +67,9 @@ formatter_mapping: dict[FormatterName, Type[BaseFormatter]] = {
 
 
 class LogFormatterFactory(Formatter):
-    def __init__(self, fmt: str, formatter_names: list[str], data: dict[str, Any] = None, *args, **kwargs) -> None:
+    def __init__(
+        self, fmt: str, formatter_names: list[str], data: Optional[dict[str, Any]] = None, *args: Any, **kwargs: Any
+    ) -> None:
         self.formatters: list[BaseFormatter] = []
         for formatter_name in formatter_names:
             if formatter_name not in formatter_mapping.keys():

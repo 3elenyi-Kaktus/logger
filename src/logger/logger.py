@@ -1,12 +1,12 @@
 import logging
-from logging import Logger as BasicLogger, handlers
+from logging import Logger as BasicLogger, LogRecord, handlers
 from logging.config import dictConfig
 import os
 from pathlib import Path
 import shutil
 from uuid import uuid4
 
-from json_helpers.helpers import readJSON, toReadableJSON
+from json_helpers.helpers import JSON, readJSON, toReadableJSON
 
 
 TRACE: int = 5
@@ -35,8 +35,8 @@ def listLoggers() -> None:
     )
 
 
-class MultiprocessingHandler(logging.handlers.WatchedFileHandler):
-    def emit(self, record):
+class MultiprocessingHandler(handlers.WatchedFileHandler):
+    def emit(self, record: LogRecord) -> None:
         try:
             msg = record.msg
             if issubclass(type(msg), BaseException):
@@ -52,7 +52,7 @@ class MultiprocessingHandler(logging.handlers.WatchedFileHandler):
             super(MultiprocessingHandler, self).emit(record)
         except (KeyboardInterrupt, SystemExit):
             raise
-        except:
+        except BaseException:
             self.handleError(record)
 
 
@@ -93,9 +93,9 @@ class Logger:
 
         self.setup()
 
-    def setup(self):
-        config: dict = readJSON(self.log_config_filepath)
-        if isinstance(config, list):
+    def setup(self) -> None:
+        config: JSON = readJSON(self.log_config_filepath)
+        if not isinstance(config, dict):
             raise RuntimeError(f"Expected a dict config in json file")
 
         # todo make checks on having desired fields in log config (without making assumptions on their existence)
@@ -121,7 +121,7 @@ class Logger:
         logging.info("Screen logging initialized successfully")
 
     @staticmethod
-    def optimizeFieldEvaluation(config: dict):
+    def optimizeFieldEvaluation(config: dict) -> None:
         # not all LogRecord fields are actually needed (and consequently computed)
         # if certain patterns are not found in format strings, corresponding parameter evaluations are disabled
 
@@ -171,7 +171,7 @@ class Logger:
         self.setup()
         logging.info("Logger reloaded")
 
-    def copyLogFile(self):
+    def copyLogFile(self) -> Path:
         new_filepath = self.log_filepath.parent / f"{uuid4()}.log"
         shutil.copyfile(self.log_filepath, new_filepath)
         return new_filepath

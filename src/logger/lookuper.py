@@ -6,7 +6,7 @@ import re
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser = ArgumentParser(description=f"")
+    parser = ArgumentParser()
     parser.add_argument(
         "-p",
         "--path",
