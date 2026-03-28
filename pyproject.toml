@@ -45,7 +45,7 @@ ignore = ["F541"]
 version = {attr = "logger.__version__"}
 
 [tool.uv.sources]
-json-helpers = { git = "https://github.com/3elenyi-Kaktus/json-helpers", rev = "v2.0.1"}
+json-helpers = { git = "https://github.com/3elenyi-Kaktus/json-helpers", rev = "v3.0.0"}
 
 [build-system]
 requires = ["setuptools>=61"]
