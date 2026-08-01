@@ -1,11 +1,12 @@
+### DEVELOPMENT ###
 # PyCharm
-.idea
+.idea/
 
+### PYTHON ###
 # Virtual environment
-.venv
-
+.venv/
 # Python bytecode
-**/__pycache__
-
-# Project metadata
-*.egg-info
+__pycache__/
+# Distribution
+*.egg-info/
+dist/

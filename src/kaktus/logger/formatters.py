@@ -4,7 +4,7 @@ import logging
 from logging import Formatter, LogRecord
 from typing import Any, Optional, Type
 
-from logger.logger import TRACE
+from kaktus.logger.logger import TRACE
 
 
 class BaseFormatter(ABC):

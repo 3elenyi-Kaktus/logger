@@ -1,52 +1,97 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
-name = "logger"
+name = "kaktus-logger"
 dynamic = ["version"]
+description = "Logger with extensive settings"
+readme = "readme.md"
+
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    {name = "3elenyi Kaktus"}
+]
+maintainers = []
+keywords = ["logger"]
+classifiers = []
+
 requires-python = ">=3.10"
 dependencies = [
-    "json-helpers",
+    "kaktus-json-helpers>=4.0.1",
 ]
+
+import-namespace = ["kaktus"]
+import-names = ["kaktus.logger"]
 
 [dependency-groups]
+build = [
+    "build>=1.5.0",
+    "twine>=7.0.0",
+]
 dev = [
-    "black==25.12.0",
-    "isort==7.0.0",
-    "mypy>=1.19.1",
-    "ruff>=0.15.8",
+    "mypy>=2.3.0",
+    "poethepoet>=0.48.0",
+    "pytest>=9.1.1",
+    "ruff>=0.16.0",
 ]
 
-[tool.black]
-line-length = 120
-extend-exclude = '''
-(
-  .venv
-)
-'''
 
-[tool.isort]
-profile = "black"
-extend_skip_glob = []
-skip_gitignore = true
-line_length = 120
-atomic = true
-lines_after_imports = 2
-combine_as_imports = true
-force_sort_within_sections = true
-color_output = true
+[project.urls]
+Repository = "https://github.com/3elenyi-Kaktus/logger"
+
+
+[tool.hatch.version]
+path = "src/kaktus/logger/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/kaktus"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+    "ASYNC", # flake8-async
+]
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+combine-as-imports = true
+force-sort-within-sections = true
 
 [tool.mypy]
+explicit_package_bases = true
+mypy_path = "src"
+
+strict = true
+
 disallow_untyped_calls = true
 disallow_untyped_defs = true
 disallow_untyped_decorators = true
 
-[tool.ruff.lint]
-ignore = ["F541"]
+[tool.poe.tasks]
+# Formatting, Linting, Typechecking
+fmt-base = "uv run ruff format"
+fmt-imports = "uv run ruff check --select I --fix"
+fmt = ["fmt-base", "fmt-imports"]
+lint = "uv run ruff check"
+type = "uv run mypy src tests"
 
-[tool.setuptools.dynamic]
-version = {attr = "logger.__version__"}
+# Tests
+test = "uv run pytest -v"
 
-[tool.uv.sources]
-json-helpers = { git = "https://github.com/3elenyi-Kaktus/json-helpers", rev = "v3.0.0"}
+# Build & Distribution
+build = "uv run python -m build"
+upload-test = "uv run python -m twine upload --repository testpypi dist/*"
+upload = "uv run python -m twine upload dist/*"
 
-[build-system]
-requires = ["setuptools>=61"]
-build-backend = "setuptools.build_meta"
+# Combined runner
+all = ["fmt", "lint", "type", "test", "build"]

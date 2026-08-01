@@ -6,7 +6,7 @@ from pathlib import Path
 import shutil
 from uuid import uuid4
 
-from json_helpers.helpers import JSON, readJSON, toReadableJSON
+from kaktus.json_helpers.helpers import JSON, readJSON, toReadableJSON
 
 
 TRACE: int = 5
