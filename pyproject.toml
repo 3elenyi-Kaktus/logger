@@ -19,7 +19,7 @@ classifiers = []
 
 requires-python = ">=3.10"
 dependencies = [
-    "kaktus-json-helpers>=4.0.1",
+    "kaktus-json-helpers>=4.0.2",
 ]
 
 import-namespace = ["kaktus"]
@@ -61,6 +61,9 @@ select = [
     "UP",  # pyupgrade
     "ASYNC", # flake8-async
 ]
+ignore = [
+    "E501", # already handled by ruff formatter
+]
 
 [tool.ruff.lint.isort]
 lines-after-imports = 2
@@ -70,20 +73,15 @@ force-sort-within-sections = true
 [tool.mypy]
 explicit_package_bases = true
 mypy_path = "src"
-
 strict = true
-
-disallow_untyped_calls = true
-disallow_untyped_defs = true
-disallow_untyped_decorators = true
 
 [tool.poe.tasks]
 # Formatting, Linting, Typechecking
-fmt-base = "uv run ruff format"
 fmt-imports = "uv run ruff check --select I --fix"
-fmt = ["fmt-base", "fmt-imports"]
+fmt-base = "uv run ruff format"
+fmt = ["fmt-imports", "fmt-base"]
 lint = "uv run ruff check"
-type = "uv run mypy src tests"
+type = "uv run mypy"
 
 # Tests
 test = "uv run pytest -v"

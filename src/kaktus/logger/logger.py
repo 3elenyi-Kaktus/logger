@@ -4,6 +4,7 @@ from logging.config import dictConfig
 import os
 from pathlib import Path
 import shutil
+from typing import Any
 from uuid import uuid4
 
 from kaktus.json_helpers.helpers import JSON, readJSON, toReadableJSON
@@ -40,16 +41,16 @@ class MultiprocessingHandler(handlers.WatchedFileHandler):
         try:
             msg = record.msg
             if issubclass(type(msg), BaseException):
-                super(MultiprocessingHandler, self).emit(record)
+                super().emit(record)
                 return
             if not isinstance(msg, str):
                 msg = str(msg)
             while len(msg) > 3900:
                 record.msg = msg[:3900] + "..."
                 msg = "..." + msg[3900:]
-                super(MultiprocessingHandler, self).emit(record)
+                super().emit(record)
             record.msg = msg
-            super(MultiprocessingHandler, self).emit(record)
+            super().emit(record)
         except (KeyboardInterrupt, SystemExit):
             raise
         except BaseException:
@@ -96,7 +97,7 @@ class Logger:
     def setup(self) -> None:
         config: JSON = readJSON(self.log_config_filepath)
         if not isinstance(config, dict):
-            raise RuntimeError(f"Expected a dict config in json file")
+            raise RuntimeError("Expected a dict config in json file")
 
         # todo make checks on having desired fields in log config (without making assumptions on their existence)
         # Tune screen handler
@@ -121,7 +122,7 @@ class Logger:
         logging.info("Screen logging initialized successfully")
 
     @staticmethod
-    def optimizeFieldEvaluation(config: dict) -> None:
+    def optimizeFieldEvaluation(config: dict[str, Any]) -> None:
         # not all LogRecord fields are actually needed (and consequently computed)
         # if certain patterns are not found in format strings, corresponding parameter evaluations are disabled
 
@@ -164,7 +165,7 @@ class Logger:
         file_log_level: int,
         tty_enabled: bool,
     ) -> None:
-        logging.info(f"Reloading logger")
+        logging.info("Reloading logger")
         self.console_log_level = console_log_level
         self.file_log_level = file_log_level
         self.tty_enabled = tty_enabled

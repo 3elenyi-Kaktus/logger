@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 import logging
 from logging import Formatter, LogRecord
-from typing import Any, Optional, Type
+from typing import Any
 
 from kaktus.logger.logger import TRACE
 
@@ -60,7 +60,7 @@ class FormatterName(str, Enum):
     CODE_LOCATION = "code_location"
 
 
-formatter_mapping: dict[FormatterName, Type[BaseFormatter]] = {
+formatter_mapping: dict[FormatterName, type[BaseFormatter]] = {
     FormatterName.COLORED: ColoredLogFormatter,
     FormatterName.CODE_LOCATION: CodeLocationLogFormatter,
 }
@@ -68,7 +68,7 @@ formatter_mapping: dict[FormatterName, Type[BaseFormatter]] = {
 
 class LogFormatterFactory(Formatter):
     def __init__(
-        self, fmt: str, formatter_names: list[str], data: Optional[dict[str, Any]] = None, *args: Any, **kwargs: Any
+        self, fmt: str, formatter_names: list[str], data: dict[str, Any] | None = None, *args: Any, **kwargs: Any
     ) -> None:
         self.formatters: list[BaseFormatter] = []
         for formatter_name in formatter_names:
@@ -80,9 +80,9 @@ class LogFormatterFactory(Formatter):
             self.formatters.append(formatter)
         for formatter in self.formatters:
             fmt = formatter.prepareFormat(fmt)
-        super(LogFormatterFactory, self).__init__(fmt, *args, **kwargs)
+        super().__init__(fmt, *args, **kwargs)
 
     def format(self, record: LogRecord) -> str:
         for formatter in self.formatters:
             formatter.format(record)
-        return super(LogFormatterFactory, self).format(record)
+        return super().format(record)

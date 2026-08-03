@@ -385,11 +385,11 @@ wheels = [
 
 [[package]]
 name = "kaktus-json-helpers"
-version = "4.0.1"
+version = "4.0.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/0a/ae/dc0d78ad41f6f37d83b29f7040f00fb3761653d08bddc533405376c09bca/kaktus_json_helpers-4.0.1.tar.gz", hash = "sha256:26915b77ccdcca0d7a3f6a5267f8fdfc82d4b3c2ef824ca5830db36522b17d1e", size = 93464, upload-time = "2026-07-30T20:09:29.505Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b1/f0/e85493b1b0ea6dafbf520290fa58328df3957758af48908b913db0e1a484/kaktus_json_helpers-4.0.2.tar.gz", hash = "sha256:e573d0c84f025d63d9599e53cd3611832c2dca6f1cf3699112964a5108d4e0dc", size = 61052, upload-time = "2026-08-03T19:10:01.312Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/82/31/339573522a96df821a9a535142c74755510c9e8dc3bfe28d97954ec8ca44/kaktus_json_helpers-4.0.1-py3-none-any.whl", hash = "sha256:06b4a145cc3a3727fdf7068fdaf95adb0a9941935953baed959f52cf4af2d54f", size = 4016, upload-time = "2026-07-30T20:09:28.025Z" },
+    { url = "https://files.pythonhosted.org/packages/35/cd/0161896c97bf140ad5280bc09669d0160a9366f9adf15a7c020a4e7627fc/kaktus_json_helpers-4.0.2-py3-none-any.whl", hash = "sha256:9b9f3f1c5ee4b7c97a22209b745619856faad7bc3f1603b66bc1d2fd6af34dc9", size = 4014, upload-time = "2026-08-03T19:10:00.007Z" },
 ]
 
 [[package]]
@@ -412,7 +412,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "kaktus-json-helpers", specifier = ">=4.0.1" }]
+requires-dist = [{ name = "kaktus-json-helpers", specifier = ">=4.0.2" }]
 
 [package.metadata.requires-dev]
 build = [

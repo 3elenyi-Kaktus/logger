@@ -29,7 +29,7 @@ if __name__ == "__main__":
     max_lines_count = 0
     max_log_string_length = 0
     for file in files:
-        with open(file, "rt") as f:
+        with open(file) as f:
             lines = f.readlines()
         logging_used: bool = False
         for line in lines:

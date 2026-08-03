@@ -5,7 +5,7 @@
 ### PYTHON ###
 # Virtual environment
 .venv/
-# Python bytecode
+# Bytecode cache
 __pycache__/
 # Distribution
 *.egg-info/
