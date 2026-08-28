@@ -20,6 +20,7 @@ classifiers = []
 requires-python = ">=3.10"
 dependencies = [
     "kaktus-json-helpers>=4.0.2",
+    "loguru>=0.7.3",
 ]
 
 import-namespace = ["kaktus"]
