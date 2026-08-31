@@ -69,7 +69,10 @@ class ConsoleOutputConfig(OutputConfig):
 
     def __json__(self) -> dict[str, Any]:
         result: dict[str, Any] = super().__json__()
-        result.update({"sink": self.sink, "colorize": self.colorize})
+        stream_name: str | None = getattr(self.sink, "name", None)
+        if not isinstance(stream_name, str):
+            stream_name = type(self.sink).__name__
+        result.update({"sink": stream_name, "colorize": self.colorize})
         return result
 
     def getKwargs(self) -> dict[str, Any]:
