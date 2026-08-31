@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 import inspect
 import logging
@@ -12,23 +13,72 @@ log = _backend
 
 
 @dataclass
-class OutputConfig:
+class OutputConfig(ABC):
     serialize: bool = False
     level: str | int = "TRACE"
     format: str | None = None
     extra: dict[str, Any] = field(default_factory=dict)
+
+    def __json__(self) -> dict[str, Any]:
+        return {
+            "serialize": self.serialize,
+            "level": self.level,
+            "format": self.format,
+            "extra": self.extra,
+        }
+
+    @abstractmethod
+    def getKwargs(self) -> dict[str, Any]:
+        kwargs: dict[str, Any] = {
+            "serialize": self.serialize,
+            "level": self.level,
+            **self.extra,
+            "enqueue": True,
+        }
+        if self.format is not None:
+            kwargs["format"] = self.format
+        return kwargs
+
+    @abstractmethod
+    def register(self, log_dirpath: Path) -> int: ...
 
 
 @dataclass
 class FileOutputConfig(OutputConfig):
     filename: str = field(kw_only=True)
 
+    def __json__(self) -> dict[str, Any]:
+        result: dict[str, Any] = super().__json__()
+        result.update({"filename": self.filename})
+        return result
+
+    def getKwargs(self) -> dict[str, Any]:
+        kwargs: dict[str, Any] = super().getKwargs()
+        kwargs.update({"watch": True})
+        return kwargs
+
+    def register(self, log_dirpath: Path) -> int:
+        path = log_dirpath / Path(self.filename).name
+        return _backend.add(path, **self.getKwargs())
+
 
 @dataclass
 class ConsoleOutputConfig(OutputConfig):
     sink: TextIO = sys.stderr
     colorize: bool = True
-    level: str | int = "INFO"
+
+    def __json__(self) -> dict[str, Any]:
+        result: dict[str, Any] = super().__json__()
+        result.update({"sink": self.sink, "colorize": self.colorize})
+        return result
+
+    def getKwargs(self) -> dict[str, Any]:
+        kwargs: dict[str, Any] = super().getKwargs()
+        kwargs.update({"colorize": self.colorize})
+        return kwargs
+
+    def register(self, log_dirpath: Path) -> int:
+        return _backend.add(self.sink, **self.getKwargs())
 
 
 class _InterceptHandler(logging.Handler):
@@ -53,46 +103,23 @@ class _InterceptHandler(logging.Handler):
 class LoggerManager:
     def __init__(
         self,
-        log_dir: Path | str,
-        outputs: list[FileOutputConfig | ConsoleOutputConfig],
+        log_dirpath: Path | str,
+        outputs: list[OutputConfig],
     ) -> None:
-        self.log_dir = Path(log_dir)
-        self.outputs: list[FileOutputConfig | ConsoleOutputConfig] = outputs
+        self.log_dirpath = Path(log_dirpath)
+        self.outputs: list[OutputConfig] = outputs
         self._handler_ids: list[int] = []
         self._stdlib_handlers: list[logging.Handler] | None = None
         self._stdlib_level: int | None = None
         self.setup()
 
-    def _sink_kwargs(self, config: OutputConfig, **overrides: Any) -> dict[str, Any]:
-        kwargs: dict[str, Any] = {
-            "level": config.level,
-            "serialize": config.serialize,
-            **config.extra,
-            "enqueue": True,
-            **overrides,
-        }
-        if config.format is not None:
-            kwargs["format"] = config.format
-        return kwargs
-
-    def _add_output(self, config: FileOutputConfig | ConsoleOutputConfig) -> None:
-        if isinstance(config, ConsoleOutputConfig):
-            handler_id = _backend.add(
-                config.sink,
-                **self._sink_kwargs(config, colorize=config.colorize),
-            )
-        else:
-            path = self.log_dir / Path(config.filename).name
-            handler_id = _backend.add(path, **self._sink_kwargs(config, watch=True))
-        self._handler_ids.append(handler_id)
-
     def setup(self) -> None:
         _backend.remove()
         self._handler_ids.clear()
         if any(isinstance(config, FileOutputConfig) for config in self.outputs):
-            self.log_dir.mkdir(parents=True, exist_ok=True)
+            self.log_dirpath.mkdir(parents=True, exist_ok=True)
         for config in self.outputs:
-            self._add_output(config)
+            self._handler_ids.append(config.register(self.log_dirpath))
         self._forward_stdlib()
 
     def _forward_stdlib(self) -> None:
@@ -115,10 +142,10 @@ class LoggerManager:
     def onReload(
         self,
         log_dir: Path | str | None = None,
-        outputs: list[FileOutputConfig | ConsoleOutputConfig] | None = None,
+        outputs: list[OutputConfig] | None = None,
     ) -> None:
         if log_dir is not None:
-            self.log_dir = Path(log_dir)
+            self.log_dirpath = Path(log_dir)
         if outputs is not None:
             self.outputs = outputs
         self.setup()

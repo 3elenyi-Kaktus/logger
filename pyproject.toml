@@ -90,7 +90,7 @@ test = "uv run pytest -v"
 # Build & Distribution
 build = "uv run python -m build"
 upload-test = "uv run python -m twine upload --repository testpypi dist/*"
-upload = "uv run python -m twine upload dist/*"
+upload = "uv run python -m twine upload dist/* --skip-existing"
 
 # Combined runner
 all = ["fmt", "lint", "type", "test", "build"]
